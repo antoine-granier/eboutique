@@ -1,0 +1,77 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+    <main class="container-md">
+        <h1>Shopping cart</h1>
+
+        {% set totalPrice = 0 %}
+        {% set totalPriceExclTax = 0 %}
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cartLine in cart.cartLines|reverse %}
+                        {% set product = cartLine.product %}
+                        {% set totalPrice = totalPrice + product.price * cartLine.quantity %}
+                        <tr>
+                            {% set media = product.media|first %}
+                            <th scope="row">
+                                <img
+                                    src="{{ media ? product.media|first.path }}"
+                                    class="rounded-2 border"
+                                    alt="{{ media and media.alt ? product.media|first.alt : product.name }}"
+                                    height="150"
+                                    width="150"
+                                >
+                            </th>
+                            <td>
+                                <a href="{{ path('app_product_show', {'id': product.id}) }}" class="text-decoration-none text-dark">
+                                    {{ product.name }}
+                                </a>
+                            </td>
+                            <td>${{ product.price|number_format(2) }}</td>
+                            <td>
+                                <form method="post" action="{{ path('app_cart_update') }}">
+                                    <label>
+                                        <input type="number" min="0" name="quantity_{{ cartLine.id }}" value="{{ cartLine.quantity }}" onchange="this.form.submit()">
+                                    </label>
+                                </form>
+                            </td>
+                            <td>
+                                {{ include('cart/_delete_form.html.twig') }}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">Your cart is empty</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if cart.cartLines|length > 0 %}
+            <p class="text-end fw-bold{{ totalPrice != 0 ? ' mb-0' }}">Subtotal: ${{ totalPrice|number_format(2) }}</p>
+            <p class="text-end">Delivery price: <span class="text-success">FREE</span></p>
+
+            <div class="d-flex justify-content-end">
+                <a href="{{ path('app_order_new', {'id': cart.id}) }}" class="btn btn-primary px-5">Checkout</a>
+            </div>
+
+        {% else %}
+            <div class="d-flex justify-content-end">
+                <a href="{{ path('app_product_index') }}" class="btn btn-primary px-5">Add product</a>
+            </div>
+        {% endif %}
+    </main>
+{% endblock %}

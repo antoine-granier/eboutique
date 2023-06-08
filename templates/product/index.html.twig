@@ -1,0 +1,57 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Products{% endblock %}
+
+{% block content %}
+    <main class="container-md">
+        <h1>Products</h1>
+
+        <div>
+            <span>Categories : </span>
+            <a href="{{ path('app_product_index') }}"
+               class="btn
+                    {% if selectedCategory is defined %}btn-outline-secondary
+                    {% else %}btn-secondary
+                    {% endif %}"
+            >All</a>
+            {% for category in categories %}
+                <a href="{{ path('app_category_show', {'id': category.id}) }}"
+                   class="btn
+                    {% if selectedCategory is defined and category.id == selectedCategory %}btn-secondary
+                    {% else %}btn-outline-secondary
+                    {% endif %}"
+                >{{ category.name }}</a>
+            {% endfor %}
+        </div>
+
+        <div class="row g-0">
+            {% for product in products %}
+                <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+                    <div class="card rounded-2 m-3" onclick="location.href='{{ path('app_product_show', {'id': product.id}) }}'" style="cursor: pointer;">
+                        {% set media = product.media|first %}
+                        <img
+                                src="{{ media ? product.media|first.path }}"
+                                class="card-img-top rounded-2"
+                                alt="{{ media and media.alt ? product.media|first.alt : product.name }}"
+                        >
+                        <div class="card-body">
+                            {{ product.available ? '<span class="text-success fw-light">In Stock</span>' : '<span class="text-danger fw-light">Out of Stock</span>' }}
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text text-truncate">
+                                {{ product.description }}
+                            </p>
+                            <div>
+                                <span class="fw-bold fs-4">${{ product.price|number_format(2) }}</span>
+                                <span class="float-end" onclick="event.stopPropagation();">
+                                    {{ include('product/_add_form.html.twig') }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <h5 class="text-muted text-center my-5">No products available</h5>
+            {% endfor %}
+        </div>
+    </main>
+{% endblock %}

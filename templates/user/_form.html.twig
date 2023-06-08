@@ -1,0 +1,13 @@
+{{ form_start(form) }}
+
+    {{ form_row(form.firstName) }}
+    {{ form_row(form.lastName) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.phone) }}
+    {{ form_row(form.plainPassword) }}
+    {% if form.roles is defined and 'ROLE_ADMIN' in app.user.getRoles %}
+        {{ form_row(form.roles) }}
+    {% endif %}
+
+    <button class="btn btn-primary mb-3">Update</button>
+{{ form_end(form) }}

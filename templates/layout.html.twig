@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container-md">
+        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+            <a href="{{ path('app_home') }}" class="d-flex align-items-center col-md-4 mb-2 mb-md-0 text-dark text-decoration-none">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" width="25" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                </svg>
+                Ephone
+            </a>
+
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="{{ path('app_home') }}" class="nav-link px-2 link-dark">Home</a></li>
+                <li><a href="{{ path('app_product_index') }}" class="nav-link px-2 link-dark">Products</a></li>
+            </ul>
+
+            <div class="col-md-4 text-end">
+                <a href="{{ path('app_cart') }}" class="text-decoration-none mx-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
+                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                    </svg>
+                    {{ app.session.get('cartSize') is null ? 0 : app.session.get('cartSize') }}
+                </a>
+                {% if app.user %}
+                    {% if 'ROLE_ADMIN' in app.user.getRoles %}
+                        <a class="btn btn-primary" href="{{ path('app_admin') }}">Admin</a>
+                    {% endif %}
+                    <a class="btn btn-outline-secondary" href="{{ path('app_user') }}">Account</a>
+                    <a class="btn btn-outline-primary" href="{{ path('app_logout') }}">Logout</a>
+                {% else %}
+                    <a class="btn btn-outline-primary me-2" href="{{ path('app_login') }}">Login</a>
+                    <a class="btn btn-primary" href="{{ path('app_register') }}">Sign-up</a>
+                {% endif %}
+            </div>
+        </header>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <div class="container-md">
+        <footer class="py-3 my-4">
+            <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+                <li class="nav-item"><a href="{{ path('app_home') }}" class="nav-link px-2 text-muted">Home</a></li>
+                <li class="nav-item"><a href="{{ path('app_product_index') }}" class="nav-link px-2 text-muted">Products</a></li>
+            </ul>
+            <p class="text-center text-muted">© 2023 Ephone</p>
+        </footer>
+    </div>
+{% endblock %}

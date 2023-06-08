@@ -1,0 +1,86 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Order{% endblock %}
+
+{% block content %}
+    {% set totalPrice = 0 %}
+    {% for orderLine in order.orderLines|reverse %}
+        {% set totalPrice = totalPrice + orderLine.product.price * orderLine.quantity %}
+    {% endfor %}
+    <main class="container-md">
+        <h1>Order</h1>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <tbody>
+                    <tr>
+                        <th>Order number</th>
+                        <td>{{ order.orderNumber }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date</th>
+                        <td>{{ order.dateTime ? order.dateTime|date('Y-m-d H:i:s') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Valid</th>
+                        <td>{{ order.valid ? 'Yes' : 'No' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Subtotal</th>
+                        <td>${{ totalPrice|number_format(2) }}</td>
+                    </tr>
+                    <tr>
+                        <th>Delivery price</th>
+                        <td>FREE</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for orderLine in order.orderLines|reverse %}
+                        {% set product = orderLine.product %}
+                        <tr>
+                            {% set media = product.media|first %}
+                            <th scope="row">
+                                <img
+                                        src="{{ media ? product.media|first.path }}"
+                                        class="rounded-2 border"
+                                        alt="{{ media and media.alt ? product.media|first.alt : product.name }}"
+                                        height="150"
+                                        width="150"
+                                >
+                            </th>
+                            <td>
+                                <a href="{{ path('app_product_show', {'id': product.id}) }}" class="text-decoration-none text-dark">
+                                    {{ product.name }}
+                                </a>
+                            </td>
+                            <td>${{ product.price|number_format(2) }}</td>
+                            <td>{{ orderLine.quantity }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5">No products found</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p class="text-end fw-bold mb-0">Subtotal: ${{ totalPrice|number_format(2) }}</p>
+        <p class="text-end">Delivery price: <span class="text-success">FREE</span></p>
+
+        {{ include('order/_delete_form.html.twig') }}
+    </main>
+{% endblock %}
